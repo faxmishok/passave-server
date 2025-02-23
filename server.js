@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Enable CORS
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 
 // Set application routes
 routeConf(express, app);
