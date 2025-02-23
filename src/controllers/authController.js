@@ -6,7 +6,7 @@ const { sendMail } = require('../utils/mailHandler');
 const querystring = require('querystring');
 const axios = require('axios');
 const authenticator = require('../middleware/authenticator');
-const { sendTokenInCookie } = require('../utils/sendTokenInCookie');
+const sendTokenInCookie = require('../utils/sendTokenInCookie');
 
 // @desc    Register a new user
 // @route   POST /auth/register
@@ -127,11 +127,16 @@ exports.activateAccount = asyncHandler(async (req, res, next) => {
     }
 
     await User.updateOne({ _id: decoded.userId }, { status: 'VERIFIED' });
-    return res
-      .status(200)
-      .json({ success: true, message: 'Account verified successfully!' });
+
+    const jwtToken = user.getSignedJWTToken();
+    return sendTokenInCookie(jwtToken, 200, res, {
+      success: true,
+      message: 'Account verified successfully!',
+    });
   } catch (err) {
-    return res.status(400).json({ success: false, message: 'Invalid token.' });
+    return res
+      .status(400)
+      .json({ success: false, message: `Invalid token: ${err}` });
   }
 });
 
@@ -171,7 +176,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   if (!tokenValidates) {
     return res.status(401).json({
       success: false,
-      message: 'Invalid two-factor token. Please try again or contact support.',
+      message: 'Invalid OTP. Please try again or contact support.',
     });
   }
 

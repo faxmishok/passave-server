@@ -7,6 +7,7 @@ const sendTokenInCookie = (token, statusCode, res, optional) => {
   const response = {
     success: true,
     message: 'Logged in!',
+    token: token,
     optional,
   };
 
