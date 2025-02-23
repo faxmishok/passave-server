@@ -46,14 +46,17 @@ saveSchema.pre('save', function (next) {
 
     try {
       const urlObj = new URL(input);
-      // Ensure the hostname starts with "www."
+
+      // Ensure the canonical loginURL has "www." at the beginning
       if (!urlObj.hostname.startsWith('www.')) {
         urlObj.hostname = 'www.' + urlObj.hostname;
       }
-      // Store the canonical loginURL (only protocol + hostname)
+      // Store the canonical loginURL (protocol + www.hostname)
       this.loginURL = `${urlObj.protocol}//${urlObj.hostname}`;
-      // Also update the logoURL using Clearbit's API
-      this.logoURL = `https://logo.clearbit.com/${urlObj.hostname}`;
+
+      // For logoURL, remove the "www." prefix if it exists
+      const logoHostname = urlObj.hostname.replace(/^www\./, '');
+      this.logoURL = `https://logo.clearbit.com/${logoHostname}`;
     } catch (error) {
       return next(new Error('Invalid URL provided.'));
     }

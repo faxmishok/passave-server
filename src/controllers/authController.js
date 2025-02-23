@@ -75,7 +75,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     // You might want to handle email errors differently
   }
 
-  return res.status(200).json({
+  return res.status(201).json({
     success: true,
     message: 'User created and verification email sent!',
     data: {
