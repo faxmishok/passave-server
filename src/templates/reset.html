@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - Passave</title>
+</head>
+
+<body style="font-family: 'Poppins', Arial, sans-serif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td align="center" style="padding: 20px;">
+                <table class="content" width="600" border="0" cellspacing="0" cellpadding="0"
+                    style="border-collapse: collapse; border: 1px solid #cccccc;">
+                    <!-- Header -->
+                    <tr>
+                        <td class="header"
+                            style="background-color: #651fff; padding: 40px; text-align: center; color: white; font-size: 24px;">
+                            Reset Password - Passave
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
+                            Dear <%= username %>, <br>
+                                You have requested a reset of your Password.
+                                <br><br>
+                                Please use the following token to reset your password.
+                        </td>
+                    </tr>
+
+                    <!-- Call to action Button -->
+                    <tr>
+                        <td style="padding: 0px 40px 0px 40px; text-align: center;">
+                            <!-- CTA Button -->
+                            <table cellspacing="0" cellpadding="0" style="margin: auto;">
+                                <tr>
+                                    <td style="padding: 0px 40px; text-align: center;">
+                                        <div
+                                            style="background-color: #651fff; padding: 10px 20px; border-radius: 5px; color: #ffffff; font-weight: bold; display: inline-block;">
+                                            <%= token %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="body" style="padding: 40px; text-align: left; font-size: 16px; line-height: 1.6;">
+                            Simply put the token in the application to reset your password.
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td class="footer"
+                            style="background-color: #343434; padding: 40px; text-align: center; color: white; font-size: 14px;">
+                            Copyright &copy; 2025 | Passave.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
