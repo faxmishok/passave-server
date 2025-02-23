@@ -22,9 +22,8 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   } = req.body;
 
   if (password !== passwordConfirmation) {
-    return res.render('sign-up', {
+    return res.status(400).json({
       success: false,
-      title: 'Passave | Sign up',
       message: 'Passwords do not match!',
     });
   }
@@ -36,9 +35,8 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     qrCodeDataUrl = await authenticator.getQRCode(secretObj.otpauth_url);
   } catch (err) {
     console.error('Error generating QR code:', err);
-    return res.render('sign-up', {
+    return res.status(500).json({
       success: false,
-      title: 'Passave | Sign up',
       message: 'Error generating secret. Please try again later.',
     });
   }
@@ -58,9 +56,8 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   try {
     await newUser.save();
   } catch (err) {
-    return res.render('sign-up', {
+    return res.status(500).json({
       success: false,
-      title: 'Passave | Sign up',
       message: err.message || 'Error saving user.',
     });
   }
@@ -150,9 +147,8 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     'email password username status secret'
   );
   if (!user) {
-    return res.render('sign-in', {
-      title: 'Passave | Sign in',
-      code: 'red',
+    return res.status(404).json({
+      success: false,
       message: 'Provided email is not registered.',
     });
   }
