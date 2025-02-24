@@ -8,8 +8,15 @@ const User = require('../models/user');
 // @access  PRIVATE (VERIFIED)
 exports.createSave = asyncHandler(async (req, res, next) => {
   const userId = req.user.userId;
-  const { name, username, email, password_secret, loginURL, category } =
-    req.body;
+  const {
+    name,
+    username,
+    email,
+    password_secret,
+    registered_number,
+    loginURL,
+    category,
+  } = req.body;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -23,6 +30,7 @@ exports.createSave = asyncHandler(async (req, res, next) => {
     username,
     email,
     password_secret,
+    registered_number,
     loginURL,
     category,
     user: userId,
@@ -42,8 +50,15 @@ exports.createSave = asyncHandler(async (req, res, next) => {
 // @route   PUT /save/:id
 // @access  PRIVATE (VERIFIED)
 exports.updateSave = asyncHandler(async (req, res, next) => {
-  const { name, username, email, password_secret, loginURL, category } =
-    req.body;
+  const {
+    name,
+    username,
+    email,
+    password_secret,
+    registered_number,
+    loginURL,
+    category,
+  } = req.body;
   const saveId = req.params.id;
 
   // Find the save document to update.
@@ -60,6 +75,8 @@ exports.updateSave = asyncHandler(async (req, res, next) => {
   if (username !== undefined) saveDoc.username = username;
   if (email !== undefined) saveDoc.email = email;
   if (password_secret !== undefined) saveDoc.password_secret = password_secret;
+  if (registered_number !== undefined)
+    saveDoc.registered_number = registered_number;
   if (loginURL !== undefined) saveDoc.loginURL = loginURL;
   if (category !== undefined) saveDoc.category = category;
 
