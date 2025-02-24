@@ -11,7 +11,7 @@ exports.getUserDB = asyncHandler(async (req, res, next) => {
     .populate({
       path: 'saves',
       select:
-        'name username email password registered_number loginURL category',
+        'name username email password_secret registered_number loginURL category',
     });
 
   if (!user) {
