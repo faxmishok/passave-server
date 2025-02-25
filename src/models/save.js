@@ -28,12 +28,12 @@ const saveSchema = new mongoose.Schema({
   },
 });
 
-const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+// const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
 
-saveSchema.path('loginURL').validate(function (value) {
-  if (!value) return true;
-  return urlRegex.test(value);
-}, 'Invalid URL.');
+// saveSchema.path('loginURL').validate(function (value) {
+//   if (!value) return true;
+//   return urlRegex.test(value);
+// }, 'Invalid URL.');
 
 // Pre-save hook to transform loginURL into a canonical form and generate logoURL
 saveSchema.pre('save', function (next) {
