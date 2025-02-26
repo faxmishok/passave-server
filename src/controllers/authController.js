@@ -255,11 +255,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   const { password, passwordConfirmation } = req.body;
 
   if (password !== passwordConfirmation) {
-    return res.status(400).json({
-      success: false,
-      message: 'Passwords do not match.',
-      resetURL: `/auth/reset/${reset_token}`,
-    });
+    return next(new ErrorResponse('Passwords do not match.', 400));
   }
 
   const user = await User.findOne({
@@ -268,28 +264,19 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: 'Invalid or expired reset token.',
-    });
+    return next(new ErrorResponse('Invalid or expired reset token.', 404));
   }
 
   user.password = password;
   user.reset_token = null;
   user.reset_expires = null;
 
-  try {
-    await user.save();
-    return res.status(200).json({
-      success: true,
-      message: 'Password reset successfully!',
-    });
-  } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: 'Error resetting password.',
-    });
-  }
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: 'Password reset successfully!',
+  });
 });
 
 // @desc    Resend verification email
