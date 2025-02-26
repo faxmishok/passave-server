@@ -243,7 +243,7 @@ exports.postForget = asyncHandler(async (req, res, next) => {
   return res.status(200).json({
     success: true,
     message: 'Token verified. You may now reset your password.',
-    resetURL: `/auth/reset/${reset_token}`,
+    reset_token: user.reset_token,
   });
 });
 
