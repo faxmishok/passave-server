@@ -385,6 +385,7 @@ exports.getGoogleUser = asyncHandler(async (req, res, next) => {
       redirectUri: `${process.env.SERVER_URL}/auth/google`,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       message: 'Error fetching Google tokens.',
