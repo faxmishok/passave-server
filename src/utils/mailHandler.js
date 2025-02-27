@@ -1,7 +1,36 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const ejs = require('ejs'); // Make sure to install ejs with: npm install ejs
+const ejs = require('ejs');
 const ErrorResponse = require('./errorResponse');
+const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
+
+const getTransporter = async () => {
+  const oAuth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI
+  );
+
+  oAuth2Client.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
+  });
+
+  const { token } = await oAuth2Client.getAccessToken();
+
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      type: 'OAuth2',
+      user: process.env.EMAIL,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+      accessToken: token,
+    },
+  });
+};
 
 const setOptions = (mailTo, mailType, options) => {
   let templatePath;
@@ -41,18 +70,10 @@ module.exports = {
     try {
       const mailOptions = setOptions(mailTo, mailType, options);
 
-      const transporter = require('nodemailer').createTransport({
-        service: 'gmail',
-        auth: {
-          type: 'OAuth2',
-          user: process.env.EMAIL,
-          clientId: process.env.EMAILER_CLIENT_ID,
-          clientSecret: process.env.EMAILER_CLIENT_SECRET,
-          refreshToken: process.env.EMAILER_REFRESH_TOKEN,
-        },
-      });
+      const transporter = await getTransporter();
 
       await transporter.sendMail(mailOptions);
+      console.log(`Email sent to ${mailTo}`);
     } catch (err) {
       console.error(err);
       throw new ErrorResponse('Error occurred while sending email', 500);
