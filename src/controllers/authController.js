@@ -7,6 +7,7 @@ const querystring = require('querystring');
 const axios = require('axios');
 const authenticator = require('../middleware/authenticator');
 const sendTokenInCookie = require('../utils/sendTokenInCookie');
+const { encodeXText } = require('nodemailer/lib/shared');
 
 // @desc    Register a new user
 // @route   POST /auth/register
@@ -19,6 +20,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     password,
     passwordConfirmation,
     email,
+    encryptor_private_key,
   } = req.body;
 
   if (password !== passwordConfirmation) {
@@ -50,6 +52,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     username,
     password,
     email,
+    encryptor_private_key,
     secret,
   });
 
@@ -72,7 +75,10 @@ exports.createUser = asyncHandler(async (req, res, next) => {
     });
   } catch (err) {
     console.error('Error sending registration email:', err);
-    // You might want to handle email errors differently
+    return res.status(500).json({
+      success: false,
+      message: 'Error sending registration email.',
+    });
   }
 
   return res.status(201).json({
@@ -144,7 +150,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   const { email, password, otp } = req.body;
 
   const user = await User.findOne({ email }).select(
-    'email password username status secret'
+    'email password username status secret encryptor_private_key'
   );
   if (!user) {
     return res.status(404).json({
@@ -252,9 +258,9 @@ exports.postForget = asyncHandler(async (req, res, next) => {
 // @access  PUBLIC
 exports.resetPassword = asyncHandler(async (req, res, next) => {
   const reset_token = req.params.token;
-  const { password, passwordConfirmation } = req.body;
+  const { newPassword, newPasswordConfirmation } = req.body;
 
-  if (password !== passwordConfirmation) {
+  if (newPassword !== newPasswordConfirmation) {
     return next(new ErrorResponse('Passwords do not match.', 400));
   }
 
@@ -267,7 +273,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Invalid or expired reset token.', 404));
   }
 
-  user.password = password;
+  user.password = newPassword;
   user.reset_token = null;
   user.reset_expires = null;
 

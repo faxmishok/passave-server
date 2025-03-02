@@ -7,7 +7,9 @@ const User = require('../models/user');
 // @access  PRIVATE (VERIFIED)
 exports.getUserDB = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user.userId)
-    .select('saves first_name last_name username email profileImage')
+    .select(
+      'saves first_name last_name username email profileImage encryptor_private_key'
+    )
     .populate({
       path: 'saves',
       select:
@@ -22,7 +24,6 @@ exports.getUserDB = asyncHandler(async (req, res, next) => {
     success: true,
     message: 'Welcome to your Dashboard!',
     user,
-    nbSaves: user.saves.length,
   });
 });
 

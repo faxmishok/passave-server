@@ -53,8 +53,13 @@ const userSchema = new mongoose.Schema({
     },
   },
   secret: {
+    // OTP setup key
     type: String,
     unique: true,
+  },
+  encryptor_private_key: {
+    type: String,
+    required: [true, 'Encryptor private key is required!'],
   },
   status: {
     type: String,
