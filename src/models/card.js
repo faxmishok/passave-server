@@ -59,23 +59,38 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-// URL validation for bank_website
-const urlRegex =
-  /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
-cardSchema.path('bank_website').validate(function (value) {
-  return urlRegex.test(value);
-}, 'Invalid URL.');
+// // URL validation for bank_website
+// const urlRegex =
+//   /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
+// cardSchema.path('bank_website').validate(function (value) {
+//   return urlRegex.test(value);
+// }, 'Invalid URL.');
 
 // Pre-save hook to automatically generate logoURL using Clearbit's API
 cardSchema.pre('save', function (next) {
   if (this.isModified('bank_website') && this.bank_website) {
+    let input = this.bank_website.trim();
+
+    // Prepend "https://" if the URL doesn't start with http:// or https://
+    if (!/^https?:\/\//i.test(input)) {
+      input = 'https://' + input;
+    }
+
     try {
-      const url = new URL(this.bank_website);
-      // Remove any leading "www." from the hostname
-      const domain = url.hostname.replace(/^www\./, '');
-      this.logoURL = `https://logo.clearbit.com/${domain}`;
-    } catch (err) {
-      return next(err);
+      const urlObj = new URL(input);
+
+      // Ensure the canonical loginURL has "www." at the beginning
+      if (!urlObj.hostname.startsWith('www.')) {
+        urlObj.hostname = 'www.' + urlObj.hostname;
+      }
+      // Store the canonical loginURL (protocol + www.hostname)
+      this.bank_website = `${urlObj.protocol}//${urlObj.hostname}`;
+
+      // For logoURL, remove the "www." prefix if it exists
+      const logoHostname = urlObj.hostname.replace(/^www\./, '');
+      this.logoURL = `https://logo.clearbit.com/${logoHostname}`;
+    } catch (error) {
+      return next(new Error('Invalid URL provided.'));
     }
   }
   next();
