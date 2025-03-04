@@ -39,7 +39,6 @@ const cardSchema = new mongoose.Schema({
   },
   bank_website: {
     type: String,
-    required: [true, 'Please provide a bank website!'],
   },
   logoURL: {
     type: String,

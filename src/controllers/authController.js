@@ -366,8 +366,7 @@ async function getTokens(code, { clientId, clientSecret, redirectUri }) {
     });
     return response.data;
   } catch (error) {
-    console.error('Failed to fetch auth tokens:', error);
-    throw new Error(error.message);
+    return next(new ErrorResponse('Failed to fetch auth tokens', 500));
   }
 }
 
