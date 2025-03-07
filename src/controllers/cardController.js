@@ -83,11 +83,23 @@ exports.deleteCard = asyncHandler(async (req, res, next) => {
   const cardId = req.params.id;
 
   const user = await User.findById(userId).select('cards'); // if your user schema tracks cards
-  if (user && user.cards) {
-    // Remove the card reference from the user's cards array, if applicable.
-    user.cards.pull(cardId);
-    await user.save();
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found.',
+    });
   }
+
+  if (!user.cards.includes(cardId)) {
+    return res.status(404).json({
+      success: false,
+      message: 'Card not found.',
+    });
+  }
+
+  // Remove the card reference from the user's cards array.
+  user.cards.pull(cardId);
+  await user.save();
 
   await Card.findByIdAndDelete(cardId);
 

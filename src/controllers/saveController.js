@@ -104,6 +104,13 @@ exports.deleteSave = asyncHandler(async (req, res, next) => {
     });
   }
 
+  if (!user.saves.includes(saveId)) {
+    return res.status(404).json({
+      success: false,
+      message: 'Save not found.',
+    });
+  }
+
   // Remove the save reference from the user's saves array.
   user.saves.pull(saveId);
   await user.save();

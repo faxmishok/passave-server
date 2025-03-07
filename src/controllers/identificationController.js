@@ -68,15 +68,27 @@ exports.updateIdentification = asyncHandler(async (req, res, next) => {
 // @route   DELETE /identification/:id
 // @access  PRIVATE (VERIFIED)
 exports.deleteIdentification = asyncHandler(async (req, res, next) => {
+  const userId = req.user.userId;
   const identificationId = req.params.id;
 
-  const identification = await Identification.findById(identificationId);
-  if (!identification) {
+  const user = await User.findById(userId).select('identifications');
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found.',
+    });
+  }
+
+  if (!user.identifications.includes(identificationId)) {
     return res.status(404).json({
       success: false,
       message: 'Identification not found.',
     });
   }
+
+  users.identifications.pull(identificationId);
+  await user.save();
 
   await Identification.findByIdAndDelete(identificationId);
 
