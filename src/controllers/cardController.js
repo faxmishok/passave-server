@@ -29,10 +29,8 @@ exports.createCard = asyncHandler(async (req, res, next) => {
   });
 
   await card.save();
-
-  // Optionally, if your User model tracks cards, push the card into user's cards array:
-  // user.cards.push(card);
-  // await user.save();
+  user.cards.push(card);
+  await user.save();
 
   return res.status(201).json({
     success: true,
@@ -49,6 +47,7 @@ exports.updateCard = asyncHandler(async (req, res, next) => {
     req.body;
   const cardId = req.params.id;
 
+  // Find the card document to update
   let cardDoc = await Card.findById(cardId);
   if (!cardDoc) {
     return res.status(404).json({

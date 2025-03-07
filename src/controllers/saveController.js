@@ -43,6 +43,7 @@ exports.createSave = asyncHandler(async (req, res, next) => {
   return res.status(201).json({
     success: true,
     message: `Save created successfully for ${user.username}!`,
+    save,
   });
 });
 

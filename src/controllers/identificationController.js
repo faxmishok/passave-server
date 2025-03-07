@@ -24,6 +24,8 @@ exports.createIdentification = asyncHandler(async (req, res, next) => {
   });
 
   await identification.save();
+  user.identifications.push(identification);
+  await user.save();
 
   return res.status(201).json({
     success: true,
@@ -39,6 +41,7 @@ exports.updateIdentification = asyncHandler(async (req, res, next) => {
   const { name, number, date_of_issue, expiration_date } = req.body;
   const identificationId = req.params.id;
 
+  // Find the ID document to update.
   let identificationDoc = await Identification.findById(identificationId);
   if (!identificationDoc) {
     return res.status(404).json({
