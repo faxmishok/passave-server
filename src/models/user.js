@@ -10,6 +10,18 @@ const userSchema = new mongoose.Schema({
       ref: 'Save',
     },
   ],
+  cards: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Card',
+    },
+  ],
+  identifications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Identification',
+    },
+  ],
   first_name: {
     type: String,
     required: [true, 'First name is required!'],
